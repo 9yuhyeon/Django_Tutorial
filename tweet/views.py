@@ -41,3 +41,17 @@ def detail_tweet(request, id):
     my_tweet = TweetModel.objects.get(id=id)
     tweet_comment = TweetComment.objects.filter(tweet_id=id).order_by('-created_at')
     return render(request, 'tweet/tweet_detail.html',{'tweet':my_tweet, 'comment':tweet_comment})
+
+
+@login_required
+def write_comment(request, id):
+    if request.method == 'POST':
+        comment = request.POST.get('comment','')
+        current_tweet = TweetModel.objects.get(id=id) # id값을 받아 코멘트를 남길 트윗을 가져옴
+
+        TC =TweetComment()
+        TC.comment = comment
+        TC.author = request.user
+        TC.tweet = current_tweet
+        TC.save()
+        return redirect('/tweet/<str:id>')
