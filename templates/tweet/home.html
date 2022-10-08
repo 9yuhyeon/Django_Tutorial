@@ -48,6 +48,18 @@
                             <div class="col-md-12 mb-2">
                                 <div class="card">
                                     <div class="card-body">
+                                        {% if tw.author == user %}
+                                        <div style="text-align: right">
+                                            <a href="/tweet/delete/{{ tw.id }}">
+                                                <span class="badge rounded-pill bg-danger">삭제</span>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                        <div style="text-align: right">
+										    <a href="#">
+										        <span class="badge rounded-pill bg-success">보기</span>
+										    </a>
+										</div>
                                         <div class="media">
                                             <div class="media-body">
                                                 <h5 class="mt-0">{{ tw.content }}</h5>
