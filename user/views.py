@@ -55,3 +55,20 @@ def logout(request):
     auth.logout(request)
     return redirect('/')
 
+
+@login_required
+def user_view(request):
+    user_list = UserModel.objects.all().exclude(username=request.user.username)
+    return render(request, 'user/user_list.html', {'user_list':user_list})
+
+
+@login_required
+def user_follow(request, id):
+    me = request.user # 요청한 사람
+    click_user = UserModel.objects.get(id=id) # id값으로 선택한 사람의 UserModel을 불러옴
+    if me in click_user.followee.all():
+        click_user.followee.remove(request.user)
+    else:
+        click_user.followee.add(request.user)
+    return redirect('/user')
+
