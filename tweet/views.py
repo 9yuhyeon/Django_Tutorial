@@ -1,4 +1,4 @@
-from re import A
+from re import A, T
 from django.shortcuts import render, redirect
 from .models import TweetComment, TweetModel
 from django.contrib.auth.decorators import login_required
@@ -11,7 +11,7 @@ def home(request):
     else:
         return redirect('/sign-in')
 
-
+@login_required
 def tweet(request):
     if request.method == 'GET':
         user = request.user.is_authenticated
@@ -23,11 +23,16 @@ def tweet(request):
     
     elif request.method == 'POST':
         user = request.user
-        my_tweet = TweetModel()
-        my_tweet.author = user
-        my_tweet.content = request.POST.get('my-content','')
-        my_tweet.save()
-        return redirect('/tweet')
+        content = request.POST.get('my-content','')
+
+        if content == '':
+            all_tweet = TweetModel.objects.all().order_by('-created_at')
+            return render(request, 'tweet/home.html',{'error':'글은 공백일 수 없습니다!'})
+        
+        else:
+            my_tweet = TweetModel.objects.create(author=user,content=content)
+            my_tweet.save()
+            return redirect('/tweet')
 
 @login_required
 def delete_tweet(request, id):
